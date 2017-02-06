@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Untitled Document</title>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+<body>
+    <h1>HW 1</h1>
+    
+    <svg width="600" height="5000">
+    </svg>
+    
+    <script>
+        
+        d3.json("invoice-taipei.json", function(dataSet){
+            
+            var body = d3.select("body")
+            var validData = 0;
+            
+            for (var i=0; i< dataSet.length; i++){
+                
+                
+                if(dataSet[i].date=='2016/8/1' && dataSet[i].city=='臺北市' && dataSet[i].amount > 1000000000){
+                    
+                    d3
+                    .select("svg")
+                    .append("text")
+                    .attr("x", 0)
+                    .attr("y", 20+12*validData)
+                    .attr("font-size", '12')
+                    .text(dataSet[i].industry);
+                    
+                    d3
+                    .select("svg")
+                    .append("rect")
+                    .attr("x", 200)
+                    .attr("y", 10+12*validData)
+                    .attr("width", dataSet[i].amount/100000000)
+                    .attr('height', 10)
+                    .attr('fill', "red");
+                    
+                    d3
+                    .select("svg")
+                    .append("text")
+                    .attr("x", 200+dataSet[i].amount/100000000+10)
+                    .attr("y", 20+12*validData)
+                    .attr("font-size", '12').text(dataSet[i].amount);
+                
+                    validData++;
+                }
+            }
+        })
+        
+        
+    </script>
+</body>
+</html>
