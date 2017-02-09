@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Untitled Document</title>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+</head>
+<body>
+    
+    <h3>HW3-1</h3>
+    
+    <svg width="600" height="180">
+    </svg>
+    
+    
+    <script>
+        
+        d3.json("invoice-taipei.json", function(dataSet){
+            
+            var body = d3.select("body")
+            var validData = 0;
+            
+            for (var i=0; i< dataSet.length; i++){
+                
+                
+                if(dataSet[i].date=='2016/8/1' && dataSet[i].city=='臺北市' && dataSet[i].amount > 1000000000){
+                    
+                    d3
+                    .select("svg")
+                    .append("text")
+                    .attr("x", 0)
+                    .attr("y", 20+12*validData)
+                    .attr("font-size", '12')
+                    .text(dataSet[i].industry);
+                    
+                    d3
+                    .select("svg")
+                    .append("rect")
+                    .attr("x", 200)
+                    .attr("y", 10+12*validData)
+                    .attr("width", dataSet[i].amount/100000000)
+                    .attr('height', 10)
+                    .attr('fill', "red");
+                    
+                    d3
+                    .select("svg")
+                    .append("text")
+                    .attr("x", 200+dataSet[i].amount/100000000+10)
+                    .attr("y", 20+12*validData)
+                    .attr("font-size", '12').text(dataSet[i].amount);
+                
+                    validData++;
+                }
+            }
+        })
+        
+    </script>
+        
+    <h3>HW3-2</h3>
+    
+    <script>
+        
+        var arr = [85, 60, 99, 49, 77, 82];        
+        
+        var selection = d3.select('body').selectAll('div').data(arr);
+        selection.enter().append('div');
+        selection.exit().remove();
+        
+        d3
+        .selectAll('div')
+        .text(function(data, i){
+            return i + ': ' + data;   
+        })
+        .style('color', function(data){
+            return (data < 70) ? 'red' : 'black';
+        });  
+        
+    </script>
+    
+    <input type="button" value="Click" onclick="update()">
+    <input type="button" value="Remove" onclick="remove()">
+
+    <script>
+        var arr = [85, 60, 99, 49, 77, 82];
+        var w = 900;
+        var h = 300;
+        var padding = 100;
+
+        createSvg();
+        draw(arr);
+        
+        function draw(data){
+            bindDataToText(data);
+            renderText();
+
+            bindDataToRect(data);
+            renderRect();    
+        }
+
+        function createSvg() {
+            d3.select("body")
+              .append("svg")
+              .attr({
+                id: 'HW3',
+                width: w,
+                height: h,
+            });
+        }
+
+        //綁定文字
+        function bindDataToText(dataSet) {
+            var selection = d3.select("svg#HW3").selectAll("text").data(dataSet);
+            
+            selection.enter().append("text").attr({ class: 'HW3_text' });
+            selection.exit().remove();
+        }
+
+        function renderText() {
+            d3
+            .selectAll("text.HW3_text")
+            .attr({
+                x: function (d, i) { return padding + 42 * i + 10; },
+                y: function (d) { return h - padding + 20; },
+                "font-size": 20
+            })
+            .text(function (data) { return data; })
+
+        }
+        
+        // 綁定圖表
+        function bindDataToRect(dataSet) {
+            var selection = d3.select("svg#HW3").selectAll("rect").data(dataSet);
+
+            selection.enter().append("rect").attr({ class: 'HW3_rect' });
+            selection.exit().remove();
+        }
+        
+        function renderRect() {
+            d3
+            .selectAll("rect.HW3_rect")
+            .attr({
+                x: function (data, i) { return padding + 42 * i; },
+                y: function (data) { return h - padding - data; },
+                width: 40,
+                height: function (data) { return data; },
+                fill: function (data) {
+                    return data < 60 ? 'red' : 'lightgreen';
+                }
+            })
+
+        }
+
+        function update() {
+            var num = random(40, 100);
+            arr.push(num);
+            
+            draw(arr);
+        }
+
+        function remove() {
+            arr.shift();
+            
+            draw(arr);
+        }
+
+        function random(N, M) {
+            return Math.ceil(Math.random() * (M - N) + N);
+        }
+    </script>
+    
+</body>
+</html>
